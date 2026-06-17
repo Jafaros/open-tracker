@@ -1,12 +1,15 @@
 <script lang="ts">
-	import TrackingRow from '$lib/components/TrackingRow.svelte';
 	import { fly } from 'svelte/transition';
+
+	const { data } = $props();
 </script>
 
 <div in:fly={{ y: 20, duration: 200 }}>
 	<h1 class="text-3xl font-bold text-white">Home</h1>
-
-	<div class="mt-4">
-		<TrackingRow />
-	</div>
+	<p class="mt-4 text-neutral-300 max-w-2xl">
+		Welcome to the Open Tracker app! This is a simple time tracking
+		application built with SvelteKit. You can track your tasks, manage
+		projects, and view your time logs. Use the navigation menu to explore
+		different features of the app.
+	</p>
 </div>

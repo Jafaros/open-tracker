@@ -1,11 +1,6 @@
+import type { TrackedTask } from '$lib/types';
 import { formatTime } from '$lib/utils/date-utils';
 import { getContext, setContext } from 'svelte';
-
-type TrackedTask = {
-	title: string;
-	startTime: number;
-	endTime: number | null;
-};
 
 export class TrackerService {
 	private taskName = $state<string | null>(null);
