@@ -29,6 +29,10 @@
 	};
 
 	const HandleDeleteClient = async (client_id: string) => {
+		if (!confirm('Are you sure you want to delete this client?')) {
+			return;
+		}
+
 		await ClientService.DeleteClient(data.currentUser.uid, client_id);
 		await invalidate('app:clients');
 	};

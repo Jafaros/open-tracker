@@ -25,6 +25,10 @@
 	};
 
 	const HandleDeleteProject = async (project_id: string) => {
+		if (!confirm('Are you sure you want to delete this project?')) {
+			return;
+		}
+
 		await ProjectService.DeleteProject(data.currentUser.uid, project_id);
 		await invalidate('app:projects');
 	};
