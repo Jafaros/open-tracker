@@ -93,6 +93,7 @@
 
 {#if showCreateModal}
 	<CreateProjectModal
+		clients={data.clients}
 		onClose={() => {
 			showCreateModal = false;
 		}}
@@ -100,5 +101,9 @@
 {/if}
 
 {#if showUpdateModal}
-	<UpdateProjectModal onClose={OnCloseUpdateModal} {selectedProject} />
+	<UpdateProjectModal
+		clients={data.clients}
+		onClose={OnCloseUpdateModal}
+		{selectedProject}
+	/>
 {/if}

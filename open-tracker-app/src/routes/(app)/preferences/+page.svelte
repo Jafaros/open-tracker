@@ -1,20 +1,28 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { Logout } from '$lib/services/auth.service';
 	import type { Preferences } from '$lib/types';
-	import { DollarSign } from '@lucide/svelte';
+	import { DollarSign, LogOut } from '@lucide/svelte';
 	import { fly } from 'svelte/transition';
 
 	const { data } = $props();
 	const preferenes = $derived(data.preferences);
+	const user = $derived(data.currentUser);
 
 	let formData = $state<Preferences>({
 		// svelte-ignore state_referenced_locally
-		hourlyRate: preferenes.hourlyRate,
+		hourlyRate: preferenes?.hourlyRate || 0,
 	});
 
 	const HandleSubmit = (event: SubmitEvent) => {
 		event.preventDefault();
 
 		console.log('Form submitted:', formData);
+	};
+
+	const HandleLogout = async () => {
+		Logout();
+		await goto('/login');
 	};
 </script>
 
@@ -72,5 +80,43 @@
 				</button>
 			</div>
 		</form>
+	</div>
+
+	<div
+		class="flex items-center gap-4 bg-neutral-700/30 max-w-2xl rounded-2xl border border-neutral-700/50 p-6 shadow-lg shadow-black/10 backdrop-blur-sm mt-6"
+	>
+		<div
+			class="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 ring-1 ring-white/10"
+		>
+			{#if user.photoURL}
+				<img
+					src={user.photoURL}
+					alt={user.displayName}
+					class="h-full w-full object-cover"
+				/>
+			{/if}
+		</div>
+
+		<div class="min-w-0 flex-1">
+			<div class="flex items-center gap-2">
+				<h2 class="truncate text-lg font-semibold text-white">
+					{user.displayName}
+				</h2>
+				<span
+					class="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-medium text-neutral-300"
+				>
+					Active
+				</span>
+			</div>
+			<p class="truncate text-sm text-neutral-400">{user.email}</p>
+		</div>
+
+		<button
+			type="button"
+			onclick={HandleLogout}
+			class="bg-red-700 hover:bg-red-800 text-white py-2 px-4 rounded-md transition-colors cursor-pointer flex items-center gap-1 font-semibold"
+		>
+			<LogOut strokeWidth="2.5" /> Logout
+		</button>
 	</div>
 </div>

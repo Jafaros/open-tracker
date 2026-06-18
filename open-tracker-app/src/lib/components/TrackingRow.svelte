@@ -89,10 +89,11 @@
 
 		<div class="text-sm text-neutral-300 relative">
 			<button
-				class="bg-neutral-600/60 w-48 rounded-md p-3 hover:bg-neutral-600/80 transition-colors"
+				disabled={isTracking}
+				class="bg-neutral-600/60 w-64 rounded-md p-3 hover:bg-neutral-600/80 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
 				onclick={DisplayProjects}
 			>
-				<span class="flex items-center gap-2 shrink-0">
+				<span class="flex items-center text-left gap-2 shrink-0">
 					<FolderOpen class="size-3.5 min-w-3.5" />
 					{#if selectedProject}
 						<span style="color: {selectedProject.hexColor}"

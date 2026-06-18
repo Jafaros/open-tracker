@@ -1,24 +1,18 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
 	import { GetCurrentUser } from '$lib/services/auth.service';
-	import { ClientService } from '$lib/services/client.service';
 	import { ProjectService } from '$lib/services/project.service';
 	import type { Client } from '$lib/types';
 	import { onMount } from 'svelte';
 	import ModalBase from './ModalBase.svelte';
 	import { CircleOff } from '@lucide/svelte';
 
-	const { onClose, selectedProject } = $props();
-
-	let clients = $state<Client[]>([]);
+	const { onClose, selectedProject, clients } = $props();
 
 	onMount(async () => {
-		const user = await GetCurrentUser();
-		if (user) {
-			clients = await ClientService.GetClients(user.uid);
-			selectedClient =
-				clients.find((c) => c.id === selectedProject.clientId) || null;
-		}
+		selectedClient =
+			clients.find((c: Client) => c.id === selectedProject.clientId) ||
+			null;
 	});
 
 	let selectedClient = $state<Client | null>(null);
@@ -115,11 +109,11 @@
 
 			{#if clientDropdownOpen}
 				<div
-					class="absolute z-10 mt-1 bg-neutral-900 rounded-md shadow-lg flex flex-col"
+					class="absolute flex flex-col top-full z-10 mt-2 min-w-32 max-h-64 overflow-y-auto rounded-xl border border-neutral-700 bg-neutral-900 p-2 text-white shadow-lg shadow-black/30"
 				>
 					{#each clients as client (client.id)}
 						<button
-							class="cursor-pointer px-4 py-2 hover:bg-neutral-800 transition-colors"
+							class="cursor-pointer px-4 py-2 rounded-lg hover:bg-neutral-800 transition-colors"
 							style="color: {client.hexColor}"
 							onclick={() => {
 								selectedClient = client;
@@ -129,8 +123,9 @@
 							{client.name}
 						</button>
 					{/each}
+					<hr class="border-neutral-500/50 my-2" />
 					<button
-						class="cursor-pointer px-4 py-2 hover:bg-neutral-800 transition-colors text-white/50 flex items-center gap-1"
+						class="cursor-pointer px-4 py-2 rounded-lg hover:bg-neutral-800 transition-colors text-white/50 flex items-center gap-1"
 						onclick={() => {
 							selectedClient = null;
 							clientDropdownOpen = false;

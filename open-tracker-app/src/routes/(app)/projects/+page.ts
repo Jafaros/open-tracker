@@ -25,5 +25,5 @@ export const load = async ({ depends, parent }) => {
 		}
 	});
 
-	return { projects };
+	return { projects, clients };
 };
