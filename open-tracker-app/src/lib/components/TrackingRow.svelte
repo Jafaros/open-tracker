@@ -32,20 +32,7 @@
 	let projectsVisible = $state<boolean>(false);
 	let selectedProject = $state<Project | null>(null);
 
-	const projects = $derived<Project[]>([
-		{
-			id: '1',
-			title: 'Project Alpha',
-			hexColor: '#2563EB',
-			tasks: [],
-		},
-		{
-			id: '2',
-			title: 'Project Beta',
-			hexColor: '#16A34A',
-			tasks: [],
-		},
-	]);
+	const { projects } = $props();
 
 	const DisplayProjects = () => {
 		projectsVisible = !projectsVisible;
@@ -105,8 +92,8 @@
 				class="bg-neutral-600/60 w-48 rounded-md p-3 hover:bg-neutral-600/80 transition-colors"
 				onclick={DisplayProjects}
 			>
-				<span class="flex items-center gap-2">
-					<FolderOpen class="size-3.5" />
+				<span class="flex items-center gap-2 shrink-0">
+					<FolderOpen class="size-3.5 min-w-3.5" />
 					{#if selectedProject}
 						<span style="color: {selectedProject.hexColor}"
 							>{selectedProject.title}</span

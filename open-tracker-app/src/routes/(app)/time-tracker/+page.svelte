@@ -16,7 +16,7 @@
 	<h1 class="text-3xl font-bold text-white">Time Tracker</h1>
 
 	<div class="mt-4">
-		<TrackingRow />
+		<TrackingRow projects={data.projects} />
 	</div>
 
 	<div class="flex flex-col gap-2 mt-4">

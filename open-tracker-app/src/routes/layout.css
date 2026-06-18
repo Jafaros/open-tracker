@@ -6,4 +6,5 @@
 
 body {
 	font-family: 'Google Sans', sans-serif;
+	@apply bg-neutral-800;
 }

@@ -4,9 +4,11 @@
 	import { fly } from 'svelte/transition';
 
 	const { data } = $props();
+	const preferenes = $derived(data.preferences);
 
 	let formData = $state<Preferences>({
-		hourlyRate: data?.preferences?.hourlyRate,
+		// svelte-ignore state_referenced_locally
+		hourlyRate: preferenes.hourlyRate,
 	});
 
 	const HandleSubmit = (event: SubmitEvent) => {

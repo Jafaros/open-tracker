@@ -38,3 +38,8 @@ export const Logout = async () => {
 	if (!auth) throw new Error('Firebase auth not initialized');
 	await auth.signOut();
 };
+
+export const GetCurrentUser = async () => {
+	if (!auth) throw new Error('Firebase auth not initialized');
+	return auth.currentUser;
+};

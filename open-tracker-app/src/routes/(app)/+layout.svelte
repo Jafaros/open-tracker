@@ -12,7 +12,7 @@
 		<SideBar />
 	</div>
 
-	<main class="w-full bg-neutral-800 relative z-0 p-8 overflow-y-auto">
+	<main class="w-full bg-neutral-800 z-0 p-8 overflow-y-auto">
 		{@render children()}
 	</main>
 </div>

@@ -10,7 +10,6 @@ export type Task = {
 	startTime: number;
 	endTime: number;
 	duration: number;
-
 	projectId?: string;
 	project?: Project;
 };
@@ -20,19 +19,22 @@ export type Project = {
 	title: string;
 	hourlyRate?: number;
 	hexColor: string;
-	tasks: Task[];
-
 	clientId?: string;
 	client?: Client;
 };
+
+export type CreateProject = Omit<Project, 'id'>;
+export type UpdateProject = Project;
 
 export type Client = {
 	id: string;
 	name: string;
 	hourlyRate?: number;
 	hexColor: string;
-	projects: Project[];
 };
+
+export type CreateClient = Omit<Client, 'id'>;
+export type UpdateClient = Client;
 
 export type Preferences = {
 	hourlyRate: number;
