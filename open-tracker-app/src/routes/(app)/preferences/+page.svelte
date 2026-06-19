@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto, invalidate } from '$app/navigation';
 	import { GetLanguages } from '$lib/language.js';
+	import { m } from '$lib/paraglide/messages.js';
 	import { Logout } from '$lib/services/auth.service';
 	import { PreferencesService } from '$lib/services/preferences.service.js';
 	import type { Preferences } from '$lib/types';
@@ -25,6 +26,7 @@
 			userId: user.uid,
 		});
 		await invalidate('app:preferences');
+		await invalidate('app:root');
 	};
 
 	const HandleLogout = async () => {
@@ -34,15 +36,17 @@
 </script>
 
 <div in:fly={{ y: 20, duration: 200 }}>
-	<h1 class="text-3xl font-bold text-white">Preferences</h1>
+	<h1 class="text-3xl font-bold text-white">{m.preferences_title()}</h1>
 
 	<div
 		class="mt-6 max-w-2xl rounded-2xl border border-neutral-700 bg-neutral-700/30 p-6 shadow-lg shadow-black/10 backdrop-blur-sm"
 	>
 		<div class="border-b border-neutral-700 pb-4">
-			<h2 class="text-lg font-semibold text-white">Billing settings</h2>
+			<h2 class="text-lg font-semibold text-white">
+				{m.billing_settings()}
+			</h2>
 			<p class="mt-1 text-sm text-neutral-400">
-				Set your default hourly rate used across the tracker.
+				{m.billing_settings_description()}
 			</p>
 		</div>
 
@@ -52,7 +56,7 @@
 					for="hourlyRate"
 					class="block text-sm font-medium text-neutral-200"
 				>
-					Hourly Rate
+					{m.hourly_rate()}
 				</label>
 				<div class="relative">
 					<span
@@ -71,8 +75,7 @@
 					/>
 				</div>
 				<p class="text-sm text-neutral-400">
-					Use your standard rate so earnings can be calculated
-					consistently.
+					{m.hourly_rate_help()}
 				</p>
 			</div>
 
@@ -81,7 +84,7 @@
 					for="hourlyRate"
 					class="block text-sm font-medium text-neutral-200"
 				>
-					Language
+					{m.language()}
 				</label>
 				<select
 					bind:value={formData.language}
@@ -92,9 +95,7 @@
 					{/each}
 				</select>
 				<p class="text-sm text-neutral-400">
-					Choose your preferred language for the app interface.
-					Translations are community-contributed and may be
-					incomplete.
+					{m.language_help()}
 				</p>
 			</div>
 
@@ -105,7 +106,7 @@
 					type="submit"
 					class="rounded-lg cursor-pointer bg-amber-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-600"
 				>
-					Save Preferences
+					{m.save_preferences()}
 				</button>
 			</div>
 		</form>
@@ -134,7 +135,7 @@
 				<span
 					class="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-medium text-neutral-300"
 				>
-					Active
+					{m.active()}
 				</span>
 			</div>
 			<p class="truncate text-sm text-neutral-400">{user.email}</p>
@@ -143,9 +144,10 @@
 		<button
 			type="button"
 			onclick={HandleLogout}
-			class="bg-red-700 hover:bg-red-800 text-white py-2 px-4 rounded-md transition-colors cursor-pointer flex items-center gap-1 font-semibold"
+			class="bg-red-700 hover:bg-red-800 text-white py-2 px-4 text-sm rounded-lg transition-colors cursor-pointer flex items-center gap-1 font-semibold"
 		>
-			<LogOut strokeWidth="2.5" /> Logout
+			<LogOut strokeWidth="2.5" class="size-3.5" />
+			{m.logout()}
 		</button>
 	</div>
 </div>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
+	import { m } from '$lib/paraglide/messages';
 	import { ProjectService } from '$lib/services/project.service';
 	import type { Project } from '$lib/types';
 	import { onMount } from 'svelte';
@@ -51,13 +52,13 @@
 </script>
 
 {#if loaded}
-	<ModalBase title="Update task" {onClose}>
+	<ModalBase title={m.update_task()} {onClose}>
 		<form class="flex flex-col gap-5" onsubmit={HandleCreate}>
 			<div class="space-y-2">
 				<label
 					for="title"
 					class="block text-sm font-medium text-neutral-200"
-					>Title <span class="text-amber-500">*</span></label
+					>{m.title()} <span class="text-amber-500">{m.required_marker()}</span></label
 				>
 				<input
 					type="text"
@@ -70,7 +71,7 @@
 
 			<div class="relative space-y-2">
 				<span class="block text-sm font-medium text-neutral-200"
-					>Project</span
+					>{m.project()}</span
 				>
 				<button
 					type="button"
@@ -86,7 +87,7 @@
 							>
 						{:else}
 							<span class="text-neutral-400"
-								>No project selected</span
+								>{m.no_project_selected()}</span
 							>
 						{/if}
 					</span>
@@ -119,7 +120,7 @@
 								projectDropdownOpen = false;
 							}}
 						>
-							<CircleOff class="size-3" /> None
+							<CircleOff class="size-3" /> {m.none()}
 						</button>
 					</div>
 				{/if}
@@ -130,7 +131,7 @@
 					<label
 						for="startTime"
 						class="block text-sm font-medium text-neutral-200"
-						>Start time <span class="text-amber-500">*</span></label
+						>{m.start_time()} <span class="text-amber-500">{m.required_marker()}</span></label
 					>
 					<input
 						type="datetime-local"
@@ -145,7 +146,7 @@
 					<label
 						for="endTime"
 						class="block text-sm font-medium text-neutral-200"
-						>End time <span class="text-amber-500">*</span></label
+						>{m.end_time()} <span class="text-amber-500">{m.required_marker()}</span></label
 					>
 					<input
 						type="datetime-local"
@@ -163,7 +164,7 @@
 					class="cursor-pointer rounded-lg bg-amber-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-700/40"
 					type="submit"
 				>
-					Update
+					{m.update()}
 				</button>
 			</div>
 		</form>

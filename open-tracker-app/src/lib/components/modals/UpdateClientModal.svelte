@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
+	import { m } from '$lib/paraglide/messages';
 	import { ClientService } from '$lib/services/client.service';
 	import ModalBase from './ModalBase.svelte';
 
@@ -21,11 +22,11 @@
 	};
 </script>
 
-<ModalBase title="Update client" {onClose}>
+<ModalBase title={m.update_client()} {onClose}>
 	<form class="flex flex-col gap-5" onsubmit={HandleCreate}>
 		<div class="space-y-2">
 			<label for="name" class="block text-sm font-medium text-neutral-200"
-				>Name <span class="text-amber-500">*</span></label
+				>{m.name()} <span class="text-amber-500">{m.required_marker()}</span></label
 			>
 			<input
 				type="text"
@@ -40,7 +41,7 @@
 			<label
 				for="hourlyRate"
 				class="block text-sm font-medium text-neutral-200"
-				>Hourly Rate</label
+				>{m.hourly_rate()}</label
 			>
 			<input
 				type="number"
@@ -57,7 +58,7 @@
 			<label
 				for="hexColor"
 				class="block text-sm font-medium text-neutral-200"
-				>Color <span class="text-amber-500">*</span></label
+				>{m.color()} <span class="text-amber-500">{m.required_marker()}</span></label
 			>
 			<div
 				class="flex items-center gap-3 rounded-xl border border-neutral-600 bg-neutral-700 px-3 py-2"
@@ -79,7 +80,7 @@
 				class="cursor-pointer rounded-lg bg-amber-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-700/40"
 				type="submit"
 			>
-				Update
+				{m.update()}
 			</button>
 		</div>
 	</form>

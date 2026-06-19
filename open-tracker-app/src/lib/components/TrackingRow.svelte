@@ -5,6 +5,7 @@
 	import { Activity, CircleOff, Clock3, FolderOpen } from '@lucide/svelte';
 	import type { Project } from '$lib/types';
 	import { invalidate } from '$app/navigation';
+	import { m } from '$lib/paraglide/messages';
 
 	const trackerState = GetTrackerState();
 	const isTracking = $derived<boolean>(trackerState.IsTracking());
@@ -78,7 +79,7 @@
 					type="text"
 					disabled={isTracking}
 					bind:value={taskName}
-					placeholder="What are you working on?"
+					placeholder={m.what_are_you_working_on()}
 					class="w-full rounded-xl border border-neutral-600 bg-neutral-700/70 px-4 py-3 text-base text-neutral-100 placeholder:text-neutral-500 ring-0 outline-none transition-colors focus:border-neutral-500 focus:bg-neutral-700 disabled:cursor-not-allowed disabled:border-neutral-700 disabled:bg-neutral-800/70 disabled:text-neutral-400"
 				/>
 			</div>
@@ -94,8 +95,8 @@
 					<Activity class="size-3.5" />
 					<span
 						>{isTracking
-							? 'Tracking in progress'
-							: 'Ready to start'}</span
+							? m.tracking_in_progress()
+							: m.ready_to_start()}</span
 					>
 				</div>
 
@@ -105,7 +106,7 @@
 					>
 						<Clock3 class="size-3.5 text-neutral-400" />
 						<span>
-							Started at
+							{m.started_at()}
 							{new Date(startTime).toLocaleTimeString([], {
 								hour: 'numeric',
 								minute: '2-digit',
@@ -129,7 +130,7 @@
 							>{selectedProject.title}</span
 						>
 					{:else}
-						Select project
+						{m.select_project()}
 					{/if}
 				</span>
 			</button>
@@ -159,7 +160,7 @@
 							projectsVisible = false;
 						}}
 					>
-						<CircleOff class="size-3" /> None
+						<CircleOff class="size-3" /> {m.none()}
 					</button>
 				</div>
 			{/if}
@@ -173,9 +174,9 @@
 			>
 				<div
 					class="flex items-center justify-center gap-1.5 text-xs uppercase tracking-wide text-neutral-400"
-				>
-					<Clock3 class="size-3.5" />
-					<span>Duration</span>
+					>
+						<Clock3 class="size-3.5" />
+					<span>{m.duration()}</span>
 				</div>
 				<div class="mt-1 text-lg font-semibold text-white">
 					{isTracking && duration ? formatTime(duration) : '00:00:00'}

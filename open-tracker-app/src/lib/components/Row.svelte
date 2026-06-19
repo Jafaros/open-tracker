@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
+	import { m } from '$lib/paraglide/messages';
 	import { TaskService } from '$lib/services/task.service';
 	import type { Task } from '$lib/types';
 	import { formatTime } from '$lib/utils/date-utils';
@@ -36,12 +37,12 @@
 
 	const options = [
 		{
-			label: 'Edit',
+			label: () => m.edit(),
 			action: () => {
 				selectedTask = task;
 			},
 		},
-		{ label: 'Delete', action: () => DeleteTask() },
+		{ label: () => m.delete(), action: () => DeleteTask() },
 	];
 
 	const DisplayOptions = () => {
@@ -49,7 +50,7 @@
 	};
 
 	const DeleteTask = async () => {
-		if (!confirm('Are you sure you want to delete this task?')) {
+		if (!confirm(m.confirm_delete_task())) {
 			return;
 		}
 
@@ -98,7 +99,7 @@
 						class="inline-flex items-center gap-2 rounded-full border border-dashed border-neutral-600 bg-neutral-700/40 px-3 py-1 text-neutral-400"
 					>
 						<FolderOpen class="size-3.5" />
-						<span>No project</span>
+						<span>{m.no_project()}</span>
 					</div>
 				{/if}
 			</div>
@@ -115,7 +116,7 @@
 						class="flex items-center justify-center gap-1.5 text-xs uppercase tracking-wide text-neutral-400"
 					>
 						<Clock3 class="size-3.5" />
-						<span>Time</span>
+						<span>{m.time()}</span>
 					</div>
 					<div class="mt-1 text-sm font-medium text-neutral-100">
 						{startTime()} - {endTime()}
@@ -128,7 +129,7 @@
 					<div
 						class="text-xs uppercase tracking-wide text-neutral-400"
 					>
-						Duration
+						{m.duration()}
 					</div>
 					<div class="mt-1 text-sm font-semibold text-white">
 						{duration()}
@@ -140,7 +141,7 @@
 				<button
 					onclick={DisplayOptions}
 					class="cursor-pointer rounded-xl border border-transparent p-2 text-neutral-300 transition-colors hover:border-neutral-600 hover:bg-neutral-700/60 hover:text-white"
-					title="More options"
+					title={m.more_options()}
 				>
 					<EllipsisVertical class="size-4" />
 					{#if optionsVisible}
@@ -153,7 +154,7 @@
 									class="block w-full rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-white/10"
 									onclick={option.action}
 								>
-									{option.label}
+									{option.label()}
 								</button>
 							{/each}
 						</div>

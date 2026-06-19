@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Row from '$lib/components/Row.svelte';
 	import TrackingRow from '$lib/components/TrackingRow.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { ChevronLeft, ChevronRight } from '@lucide/svelte';
 	import { fly } from 'svelte/transition';
 
@@ -40,7 +41,7 @@
 </script>
 
 <div in:fly={{ y: 20, duration: 200 }}>
-	<h1 class="text-3xl font-bold text-white">Time Tracker</h1>
+	<h1 class="text-3xl font-bold text-white">{m.time_tracker_title()}</h1>
 
 	<div class="mt-4">
 		<TrackingRow projects={data.projects} />
@@ -52,7 +53,7 @@
 				<Row {task} />
 			{/each}
 		{:else}
-			<p class="text-white/50">No tracked tasks found.</p>
+			<p class="text-white/50">{m.no_tracked_tasks_found()}</p>
 		{/if}
 	</div>
 
@@ -60,7 +61,7 @@
 		class="mt-4 flex flex-wrap items-center justify-between gap-4 text-sm text-gray-400"
 	>
 		<div>
-			Items per page
+			{m.items_per_page()}
 			<select
 				bind:value={selectedPageSize}
 				onchange={HandlePageSizeChange}
@@ -78,7 +79,11 @@
 		</div>
 
 		<div class="text-neutral-400">
-			Showing {firstVisibleTask}-{lastVisibleTask} of {totalTasks}
+			{m.showing_items({
+				start: firstVisibleTask,
+				end: lastVisibleTask,
+				total: totalTasks,
+			})}
 		</div>
 	</div>
 
@@ -87,20 +92,20 @@
 			class="bg-neutral-700/30 text-neutral-200 border border-neutral-700/15 rounded-l px-4 py-2 transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-neutral-700/30"
 			disabled={currentPage === 1}
 			onclick={GoToPreviousPage}
-			aria-label="Previous page"
+			aria-label={m.previous_page()}
 		>
 			<ChevronLeft />
 		</button>
 		<div
 			class="bg-neutral-700/30 text-neutral-200 border border-neutral-700/15 px-4 py-2"
 		>
-			{currentPage} of {maxPages}
+			{m.page_of_pages({ page: currentPage, maxPages })}
 		</div>
 		<button
 			class="bg-neutral-700/30 text-neutral-200 border border-neutral-700/15 rounded-r px-4 py-2 transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-neutral-700/30"
 			disabled={currentPage === maxPages}
 			onclick={GoToNextPage}
-			aria-label="Next page"
+			aria-label={m.next_page()}
 		>
 			<ChevronRight />
 		</button>

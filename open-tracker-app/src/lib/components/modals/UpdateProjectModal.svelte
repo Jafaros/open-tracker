@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
+	import { m } from '$lib/paraglide/messages';
 	import { ProjectService } from '$lib/services/project.service';
 	import type { Client } from '$lib/types';
 	import ModalBase from './ModalBase.svelte';
@@ -37,13 +38,13 @@
 </script>
 
 {#if loaded}
-	<ModalBase title="Update project" {onClose}>
+	<ModalBase title={m.update_project()} {onClose}>
 		<form class="flex flex-col gap-5" onsubmit={HandleCreate}>
 			<div class="space-y-2">
 				<label
 					for="title"
 					class="block text-sm font-medium text-neutral-200"
-					>Title <span class="text-amber-500">*</span></label
+					>{m.title()} <span class="text-amber-500">{m.required_marker()}</span></label
 				>
 				<input
 					type="text"
@@ -58,7 +59,7 @@
 				<label
 					for="hourlyRate"
 					class="block text-sm font-medium text-neutral-200"
-					>Hourly Rate</label
+					>{m.hourly_rate()}</label
 				>
 				<input
 					type="number"
@@ -75,7 +76,7 @@
 				<label
 					for="hexColor"
 					class="block text-sm font-medium text-neutral-200"
-					>Color <span class="text-amber-500">*</span></label
+					>{m.color()} <span class="text-amber-500">{m.required_marker()}</span></label
 				>
 				<div
 					class="flex items-center gap-3 rounded-xl border border-neutral-600 bg-neutral-700 px-3 py-2"
@@ -95,7 +96,7 @@
 
 			<div class="relative space-y-2">
 				<span class="block text-sm font-medium text-neutral-200"
-					>Client</span
+					>{m.client()}</span
 				>
 				<button
 					type="button"
@@ -111,7 +112,7 @@
 							>
 						{:else}
 							<span class="text-neutral-400"
-								>No client selected</span
+								>{m.no_client_selected()}</span
 							>
 						{/if}
 					</span>
@@ -144,7 +145,7 @@
 								clientDropdownOpen = false;
 							}}
 						>
-							<CircleOff class="size-3" /> None
+							<CircleOff class="size-3" /> {m.none()}
 						</button>
 					</div>
 				{/if}
@@ -155,7 +156,7 @@
 					class="cursor-pointer rounded-lg bg-amber-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-700/40"
 					type="submit"
 				>
-					Update
+					{m.update()}
 				</button>
 			</div>
 		</form>

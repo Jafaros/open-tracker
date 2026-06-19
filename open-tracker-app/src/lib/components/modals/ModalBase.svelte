@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from '$lib/paraglide/messages';
 	import { X } from '@lucide/svelte';
 	import { fade, fly } from 'svelte/transition';
 
@@ -23,7 +24,7 @@
 			<button
 				onclick={onClose}
 				class="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-transparent text-neutral-400 transition-colors hover:border-neutral-600 hover:bg-neutral-700 hover:text-white"
-				aria-label="Close modal"
+				aria-label={m.close_modal()}
 			>
 				<X class="size-4" />
 			</button>

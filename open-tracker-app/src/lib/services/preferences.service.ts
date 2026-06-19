@@ -18,7 +18,7 @@ export class PreferencesService {
 		const snapshot = await getDoc(preferenceRef);
 
 		if (!snapshot.exists()) {
-			return { hourlyRate: 0 };
+			return { hourlyRate: 0, language: 'en' };
 		}
 
 		return snapshot.data() as Preferences;
