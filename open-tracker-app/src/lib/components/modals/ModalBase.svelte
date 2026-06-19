@@ -6,23 +6,30 @@
 </script>
 
 <div
-	class="fixed inset-0 flex items-center justify-center bg-black/60 w-screen h-screen z-100"
+	class="fixed inset-0 z-100 flex h-screen w-screen items-center justify-center bg-black/70 px-4 py-6 backdrop-blur-sm"
 	in:fade={{ duration: 200 }}
 >
 	<div
-		class="bg-neutral-700 rounded-lg p-6 w-full max-w-md relative"
+		class="relative flex max-h-full w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-neutral-700 bg-neutral-800 text-neutral-100 shadow-2xl shadow-black/40 ring-1 ring-white/5"
 		transition:fly={{ y: 20, duration: 200 }}
 	>
-		<h2 class="text-2xl font-bold text-white mb-4">{title}</h2>
-
-		<button
-			onclick={onClose}
-			class="absolute top-4 right-4 text-white hover:text-gray-300 cursor-pointer"
+		<div
+			class="flex items-center justify-between gap-4 border-b border-neutral-700 bg-neutral-700/30 px-6 py-5"
 		>
-			<X />
-		</button>
+			<div>
+				<h2 class="text-xl font-semibold text-white">{title}</h2>
+			</div>
 
-		<div>
+			<button
+				onclick={onClose}
+				class="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-transparent text-neutral-400 transition-colors hover:border-neutral-600 hover:bg-neutral-700 hover:text-white"
+				aria-label="Close modal"
+			>
+				<X class="size-4" />
+			</button>
+		</div>
+
+		<div class="overflow-y-auto px-6 py-5">
 			{@render children()}
 		</div>
 	</div>
