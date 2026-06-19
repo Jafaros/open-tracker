@@ -113,10 +113,6 @@
 	</div>
 
 	<div
-		class="mt-6 max-w-2xl rounded-2xl border border-neutral-700 bg-neutral-700/30 p-6 shadow-lg shadow-black/10 backdrop-blur-sm"
-	></div>
-
-	<div
 		class="flex items-center gap-4 bg-neutral-700/30 max-w-2xl rounded-2xl border border-neutral-700/50 p-6 shadow-lg shadow-black/10 backdrop-blur-sm mt-6"
 	>
 		<div
