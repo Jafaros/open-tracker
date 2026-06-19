@@ -5,17 +5,19 @@
 
 	const { onClose } = $props();
 
-	let name = $state<string>('');
-	let hourlyRate = $state<number>(0);
-	let hexColor = $state<string>('#ffffff');
+	let formData = $state({
+		name: '',
+		hourlyRate: undefined,
+		hexColor: '#ffffff',
+	});
 
 	const HandleCreate = async (event: SubmitEvent) => {
 		event.preventDefault();
 
 		await ClientService.CreateClient({
-			name,
-			hourlyRate,
-			hexColor,
+			name: formData.name,
+			hourlyRate: formData.hourlyRate,
+			hexColor: formData.hexColor,
 		});
 
 		await invalidate('app:clients');
@@ -34,7 +36,7 @@
 				type="text"
 				id="name"
 				required
-				bind:value={name}
+				bind:value={formData.name}
 				class="w-full px-3 py-2 bg-neutral-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-neutral-500"
 			/>
 		</div>
@@ -49,7 +51,7 @@
 				type="number"
 				id="hourlyRate"
 				required
-				bind:value={hourlyRate}
+				bind:value={formData.hourlyRate}
 				class="w-full px-3 py-2 bg-neutral-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-neutral-500"
 			/>
 		</div>
@@ -64,7 +66,7 @@
 				type="color"
 				id="hexColor"
 				required
-				bind:value={hexColor}
+				bind:value={formData.hexColor}
 				class="w-full p-1 h-10 bg-neutral-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-neutral-500"
 			/>
 		</div>

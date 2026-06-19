@@ -9,7 +9,7 @@
 
 	let formData = $state({
 		title: '',
-		hourlyRate: 0,
+		hourlyRate: undefined,
 		hexColor: '#ffffff',
 	});
 
