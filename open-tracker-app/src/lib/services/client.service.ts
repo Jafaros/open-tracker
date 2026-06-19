@@ -1,29 +1,30 @@
-import { db } from '$lib/firebase';
 import type { Client, CreateClient, UpdateClient } from '$lib/types';
+import { deleteDoc, getDocs, setDoc } from 'firebase/firestore';
 import {
-	collection,
-	deleteDoc,
-	doc,
-	getDocs,
-	setDoc,
-} from 'firebase/firestore';
+	UserCollectionRef,
+	UserDocumentRef,
+	type UserScopedServiceContext,
+} from './firestore.service';
 
 export class ClientService {
-	public static async GetClients(user_id: string): Promise<Client[]> {
-		const clientsCollection = collection(db, 'users', user_id, 'clients');
+	public static async GetClients(
+		context?: UserScopedServiceContext,
+	): Promise<Client[]> {
+		const clientsCollection = await UserCollectionRef<Client>(
+			'clients',
+			context,
+		);
 
 		const snapshot = await getDocs(clientsCollection);
 
-		const clients: Client[] = snapshot.docs.map((doc) => {
+		return snapshot.docs.map((doc) => {
 			return doc.data() as Client;
 		});
-
-		return clients;
 	}
 
 	public static async CreateClient(
-		user_id: string,
 		client_data: CreateClient,
+		context?: UserScopedServiceContext,
 	): Promise<Client> {
 		const newClient: Client = {
 			id: crypto.randomUUID(),
@@ -32,48 +33,49 @@ export class ClientService {
 			hexColor: client_data.hexColor,
 		};
 
-		const clientRef = doc(
-			collection(db, 'users', user_id, 'clients'),
+		const clientRef = await UserDocumentRef<Client>(
+			'clients',
 			newClient.id,
+			context,
 		);
 
 		await setDoc(clientRef, newClient);
 
-		return await Promise.resolve(newClient);
+		return newClient;
 	}
 
 	public static async UpdateClient(
-		user_id: string,
 		client_data: UpdateClient,
+		context?: UserScopedServiceContext,
 	): Promise<Client> {
 		const updatedClient: Client = {
 			id: client_data.id,
-			name: client_data.name || 'Existing Client Name',
-			hourlyRate: client_data.hourlyRate || 0,
-			hexColor: client_data.hexColor || '#FFFFFF',
+			name: client_data.name,
+			hourlyRate: client_data.hourlyRate,
+			hexColor: client_data.hexColor,
 		};
 
-		const clientRef = doc(
-			collection(db, 'users', user_id, 'clients'),
+		const clientRef = await UserDocumentRef<Client>(
+			'clients',
 			updatedClient.id,
+			context,
 		);
 
 		await setDoc(clientRef, updatedClient);
 
-		return await Promise.resolve(updatedClient);
+		return updatedClient;
 	}
 
 	public static async DeleteClient(
-		user_id: string,
 		client_id: string,
+		context?: UserScopedServiceContext,
 	): Promise<void> {
-		const clientRef = doc(
-			collection(db, 'users', user_id, 'clients'),
+		const clientRef = await UserDocumentRef<Client>(
+			'clients',
 			client_id,
+			context,
 		);
 
 		await deleteDoc(clientRef);
-
-		return await Promise.resolve();
 	}
 }

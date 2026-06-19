@@ -1,17 +1,19 @@
-import { db } from '$lib/firebase';
 import type { CreateTask, Task, TrackedTask, UpdateTask } from '$lib/types';
+import { deleteDoc, getDocs, setDoc } from '@firebase/firestore';
 import {
-	collection,
-	deleteDoc,
-	doc,
-	getDocs,
-	setDoc,
-} from '@firebase/firestore';
-import { GetCurrentUser } from './auth.service';
+	UserCollectionRef,
+	UserDocumentRef,
+	type UserScopedServiceContext,
+} from './firestore.service';
 
 export class TaskService {
-	public static async GetTasks(user_id: string): Promise<Task[]> {
-		const tasksCollection = collection(db, 'users', user_id, 'tasks');
+	public static async GetTasks(
+		context?: UserScopedServiceContext,
+	): Promise<Task[]> {
+		const tasksCollection = await UserCollectionRef<Task>(
+			'tasks',
+			context,
+		);
 
 		const snapshot = await getDocs(tasksCollection);
 
@@ -36,9 +38,9 @@ export class TaskService {
 	}
 
 	public static async GetCurrentlyTrackedTask(
-		user_id: string,
+		context?: UserScopedServiceContext,
 	): Promise<TrackedTask | null> {
-		const tasks = await this.GetTasks(user_id);
+		const tasks = await this.GetTasks(context);
 
 		const trackedTask = tasks.find((task) => task.endTime === undefined);
 
@@ -49,37 +51,32 @@ export class TaskService {
 		return trackedTask as TrackedTask;
 	}
 
-	public static async CreateTask(task: CreateTask): Promise<Task> {
-		const currentUser = await GetCurrentUser();
-
-		if (!currentUser) {
-			throw new Error('User not authenticated');
-		}
-
+	public static async CreateTask(
+		task: CreateTask,
+		context?: UserScopedServiceContext,
+	): Promise<Task> {
 		const newTask: Task = {
 			id: crypto.randomUUID(),
-			startTime: Date.now(),
+			startTime: task.startTime,
 			title: task.title,
 			projectId: task.projectId,
 		};
 
-		const taskRef = doc(
-			collection(db, 'users', currentUser.uid, 'tasks'),
+		const taskRef = await UserDocumentRef<Task>(
+			'tasks',
 			newTask.id,
+			context,
 		);
 
 		await setDoc(taskRef, newTask);
 
-		return await Promise.resolve(newTask);
+		return newTask;
 	}
 
-	public static async UpdateTask(task: UpdateTask): Promise<Task> {
-		const currentUser = await GetCurrentUser();
-
-		if (!currentUser) {
-			throw new Error('User not authenticated');
-		}
-
+	public static async UpdateTask(
+		task: UpdateTask,
+		context?: UserScopedServiceContext,
+	): Promise<Task> {
 		const updatedTask: Task = {
 			id: task.id,
 			title: task.title,
@@ -88,29 +85,26 @@ export class TaskService {
 			projectId: task.projectId,
 		};
 
-		const taskRef = doc(
-			collection(db, 'users', currentUser.uid, 'tasks'),
+		const taskRef = await UserDocumentRef<Task>(
+			'tasks',
 			updatedTask.id,
+			context,
 		);
 
 		await setDoc(taskRef, updatedTask);
-		return await Promise.resolve(updatedTask);
+		return updatedTask;
 	}
 
-	public static async DeleteTask(task_id: string): Promise<void> {
-		const currentUser = await GetCurrentUser();
-
-		if (!currentUser) {
-			throw new Error('User not authenticated');
-		}
-
-		const taskRef = doc(
-			collection(db, 'users', currentUser.uid, 'tasks'),
+	public static async DeleteTask(
+		task_id: string,
+		context?: UserScopedServiceContext,
+	): Promise<void> {
+		const taskRef = await UserDocumentRef<Task>(
+			'tasks',
 			task_id,
+			context,
 		);
 
 		await deleteDoc(taskRef);
-
-		return await Promise.resolve();
 	}
 }

@@ -10,8 +10,9 @@ export const load = async ({ depends, parent }) => {
 		return { projects: [] };
 	}
 
-	const projects = await ProjectService.GetProjectsForUser(currentUser.uid);
-	const clients = await ClientService.GetClients(currentUser.uid);
+	const serviceContext = { userId: currentUser.uid };
+	const projects = await ProjectService.GetProjects(serviceContext);
+	const clients = await ClientService.GetClients(serviceContext);
 
 	// Map client data to projects
 	projects.forEach((project) => {

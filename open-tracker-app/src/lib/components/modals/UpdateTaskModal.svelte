@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
-	import { GetCurrentUser } from '$lib/services/auth.service';
 	import { ProjectService } from '$lib/services/project.service';
 	import type { Project } from '$lib/types';
 	import { onMount } from 'svelte';

@@ -1,10 +1,7 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
-	import { GetCurrentUser } from '$lib/services/auth.service';
-	import { ClientService } from '$lib/services/client.service';
 	import { ProjectService } from '$lib/services/project.service';
 	import type { Client } from '$lib/types';
-	import { onMount } from 'svelte';
 	import ModalBase from './ModalBase.svelte';
 	import { CircleOff } from '@lucide/svelte';
 
@@ -23,13 +20,7 @@
 	const HandleCreate = async (event: SubmitEvent) => {
 		event.preventDefault();
 
-		const currentUser = await GetCurrentUser();
-
-		if (!currentUser) {
-			return;
-		}
-
-		await ProjectService.CreateProject(currentUser.uid, {
+		await ProjectService.CreateProject({
 			title: formData.title,
 			hourlyRate: formData.hourlyRate,
 			hexColor: formData.hexColor,

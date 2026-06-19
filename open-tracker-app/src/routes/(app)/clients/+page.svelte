@@ -33,7 +33,9 @@
 			return;
 		}
 
-		await ClientService.DeleteClient(data.currentUser.uid, client_id);
+		await ClientService.DeleteClient(client_id, {
+			userId: data.currentUser.uid,
+		});
 		await invalidate('app:clients');
 	};
 </script>

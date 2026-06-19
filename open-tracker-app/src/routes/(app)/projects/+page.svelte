@@ -29,7 +29,9 @@
 			return;
 		}
 
-		await ProjectService.DeleteProject(data.currentUser.uid, project_id);
+		await ProjectService.DeleteProject(project_id, {
+			userId: data.currentUser.uid,
+		});
 		await invalidate('app:projects');
 	};
 </script>

@@ -1,15 +1,18 @@
-import { db } from '$lib/firebase';
 import type { Preferences } from '$lib/types';
-import { doc, getDoc, setDoc } from '@firebase/firestore';
+import { getDoc, setDoc } from '@firebase/firestore';
+import {
+	UserDocumentRef,
+	type UserScopedServiceContext,
+} from './firestore.service';
 
 export class PreferencesService {
-	public static async GetPreferences(user_id: string): Promise<Preferences> {
-		const preferenceRef = doc(
-			db,
-			'users',
-			user_id,
+	public static async GetPreferences(
+		context?: UserScopedServiceContext,
+	): Promise<Preferences> {
+		const preferenceRef = await UserDocumentRef<Preferences>(
 			'preferences',
 			'default',
+			context,
 		);
 
 		const snapshot = await getDoc(preferenceRef);
@@ -22,15 +25,13 @@ export class PreferencesService {
 	}
 
 	public static async SavePreferences(
-		user_id: string,
 		preferences: Preferences,
+		context?: UserScopedServiceContext,
 	): Promise<void> {
-		const preferenceRef = doc(
-			db,
-			'users',
-			user_id,
+		const preferenceRef = await UserDocumentRef<Preferences>(
 			'preferences',
 			'default',
+			context,
 		);
 
 		await setDoc(preferenceRef, preferences);

@@ -2,22 +2,13 @@ import type { TrackedTask } from '$lib/types';
 import { formatTime } from '$lib/utils/date-utils';
 import { getContext, setContext } from 'svelte';
 import { TaskService } from './task.service';
-import { GetCurrentUser } from './auth.service';
 
 export class TrackerService {
 	private trackedTask = $state<TrackedTask | null>(null);
 
 	constructor() {
 		(async () => {
-			const currentUser = await GetCurrentUser();
-
-			if (!currentUser) {
-				throw new Error('User not authenticated');
-			}
-
-			this.trackedTask = await TaskService.GetCurrentlyTrackedTask(
-				currentUser.uid,
-			);
+			this.trackedTask = await TaskService.GetCurrentlyTrackedTask();
 		})();
 	}
 
@@ -36,13 +27,6 @@ export class TrackerService {
 			projectId: projectId,
 		};
 
-		const currentUser = await GetCurrentUser();
-
-		if (!currentUser) {
-			throw new Error('User not authenticated');
-		}
-
-		// Create a new tracker document in Firestore
 		this.trackedTask.id = (
 			await TaskService.CreateTask(this.trackedTask)
 		).id;
@@ -59,17 +43,15 @@ export class TrackerService {
 		const duration = this.trackedTask.endTime - this.trackedTask.startTime;
 		console.log(`Tracking stopped. Duration: ${formatTime(duration)}`);
 
-		const currentUser = await GetCurrentUser();
-
-		if (!currentUser) {
-			throw new Error('User not authenticated');
+		if (!this.trackedTask.id) {
+			throw new Error('Tracked task has not been saved yet');
 		}
 
 		await TaskService.UpdateTask({
 			id: this.trackedTask.id,
 			...this.trackedTask,
 			endTime: this.trackedTask.endTime,
-		} as any);
+		});
 
 		// Reset the start and end times after stopping tracking
 		this.ResetTracking();

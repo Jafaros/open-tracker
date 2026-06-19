@@ -1,57 +1,31 @@
-import { db } from '$lib/firebase';
 import type { CreateProject, Project, UpdateProject } from '$lib/types';
+import { deleteDoc, getDocs, setDoc } from '@firebase/firestore';
 import {
-	collection,
-	deleteDoc,
-	doc,
-	getDocs,
-	setDoc,
-} from '@firebase/firestore';
-import { GetCurrentUser } from './auth.service';
+	UserCollectionRef,
+	UserDocumentRef,
+	type UserScopedServiceContext,
+} from './firestore.service';
 
 export class ProjectService {
-	public static async GetProjects(): Promise<Project[]> {
-		const currentUser = await GetCurrentUser();
-
-		if (!currentUser) {
-			throw new Error('User not authenticated');
-		}
-
-		const projectsCollection = collection(
-			db,
-			'users',
-			currentUser.uid,
+	public static async GetProjects(
+		context?: UserScopedServiceContext,
+	): Promise<Project[]> {
+		const projectsCollection = await UserCollectionRef<Project>(
 			'projects',
+			context,
 		);
 
 		const snapshot = await getDocs(projectsCollection);
 
-		const projects: Project[] = snapshot.docs.map((doc) => {
+		return snapshot.docs.map((doc) => {
 			return doc.data() as Project;
 		});
-
-		return projects;
-	}
-
-	public static async GetProjectsForUser(
-		user_id: string,
-	): Promise<Project[]> {
-		const projectsCollection = collection(db, 'users', user_id, 'projects');
-
-		const snapshot = await getDocs(projectsCollection);
-
-		const projects: Project[] = snapshot.docs.map((doc) => {
-			return doc.data() as Project;
-		});
-
-		return projects;
 	}
 
 	public static async CreateProject(
-		user_id: string,
 		project_data: CreateProject,
+		context?: UserScopedServiceContext,
 	): Promise<Project> {
-		// Implementation for creating a new project
 		const newProject: Project = {
 			id: crypto.randomUUID(),
 			title: project_data.title,
@@ -60,62 +34,58 @@ export class ProjectService {
 			clientId: project_data.clientId,
 		};
 
-		const projectRef = doc(
-			collection(db, 'users', user_id, 'projects'),
+		const projectRef = await UserDocumentRef<Project>(
+			'projects',
 			newProject.id,
+			context,
 		);
 
 		await setDoc(projectRef, newProject);
 
-		return await Promise.resolve(newProject);
+		return newProject;
 	}
 
 	public static async UpdateProject(
-		user_id: string,
 		project_data: UpdateProject,
+		context?: UserScopedServiceContext,
 	): Promise<Project> {
-		// Implementation for updating an existing project
-		// In a real implementation, you would fetch the existing project from a database, update its properties, and save it back to the database
 		const updatedProject: Project = {
 			id: project_data.id,
-			title: project_data.title || 'Existing Project Title',
-			hourlyRate: project_data.hourlyRate || 0,
-			hexColor: project_data.hexColor || '#FFFFFF',
+			title: project_data.title,
+			hourlyRate: project_data.hourlyRate,
+			hexColor: project_data.hexColor,
 			clientId: project_data.clientId,
 		};
 
-		const projectRef = doc(
-			collection(db, 'users', user_id, 'projects'),
+		const projectRef = await UserDocumentRef<Project>(
+			'projects',
 			updatedProject.id,
+			context,
 		);
 
 		await setDoc(projectRef, updatedProject);
 
-		return await Promise.resolve(updatedProject);
+		return updatedProject;
 	}
 
 	public static async DeleteProject(
-		user_id: string,
 		project_id: string,
+		context?: UserScopedServiceContext,
 	): Promise<void> {
-		const projectRef = doc(
-			collection(db, 'users', user_id, 'projects'),
+		const projectRef = await UserDocumentRef<Project>(
+			'projects',
 			project_id,
+			context,
 		);
 
 		await deleteDoc(projectRef);
-
-		return await Promise.resolve();
 	}
 
-	public static async GetProject(project_id: string): Promise<Project> {
-		const currentUser = await GetCurrentUser();
-
-		if (!currentUser) {
-			throw new Error('User not authenticated');
-		}
-
-		const projects = await this.GetProjects();
+	public static async GetProject(
+		project_id: string,
+		context?: UserScopedServiceContext,
+	): Promise<Project> {
+		const projects = await this.GetProjects(context);
 
 		const project = projects.find((p) => p.id === project_id);
 

@@ -9,9 +9,9 @@ export const load = async ({ depends, parent }) => {
 		return { preferences: null };
 	}
 
-	const preferences = await PreferencesService.GetPreferences(
-		currentUser.uid,
-	);
+	const preferences = await PreferencesService.GetPreferences({
+		userId: currentUser.uid,
+	});
 
 	return {
 		preferences,

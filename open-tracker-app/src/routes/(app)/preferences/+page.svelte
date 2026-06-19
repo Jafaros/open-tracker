@@ -17,7 +17,9 @@
 
 	const HandleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
-		await PreferencesService.SavePreferences(user.uid, formData);
+		await PreferencesService.SavePreferences(formData, {
+			userId: user.uid,
+		});
 		await invalidate('app:preferences');
 	};
 

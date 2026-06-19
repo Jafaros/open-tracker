@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
-	import { GetCurrentUser } from '$lib/services/auth.service';
 	import { ClientService } from '$lib/services/client.service';
 	import ModalBase from './ModalBase.svelte';
 
@@ -13,13 +12,7 @@
 	const HandleCreate = async (event: SubmitEvent) => {
 		event.preventDefault();
 
-		const currentUser = await GetCurrentUser();
-
-		if (!currentUser) {
-			return;
-		}
-
-		await ClientService.CreateClient(currentUser.uid, {
+		await ClientService.CreateClient({
 			name,
 			hourlyRate,
 			hexColor,

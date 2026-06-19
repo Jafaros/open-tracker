@@ -11,8 +11,9 @@ export const load = async ({ depends, parent }) => {
 		return { projects: [] };
 	}
 
-	const projects = await ProjectService.GetProjectsForUser(currentUser.uid);
-	const tasks = await TaskService.GetTasks(currentUser.uid);
+	const serviceContext = { userId: currentUser.uid };
+	const projects = await ProjectService.GetProjects(serviceContext);
+	const tasks = await TaskService.GetTasks(serviceContext);
 
 	tasks.forEach((task: Task) => {
 		if (task.startTime && task.endTime) {

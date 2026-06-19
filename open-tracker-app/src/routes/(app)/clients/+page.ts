@@ -9,6 +9,8 @@ export const load = async ({ depends, parent }) => {
 		return { clients: [] };
 	}
 
-	const clients = await ClientService.GetClients(currentUser.uid);
+	const clients = await ClientService.GetClients({
+		userId: currentUser.uid,
+	});
 	return { clients };
 };
