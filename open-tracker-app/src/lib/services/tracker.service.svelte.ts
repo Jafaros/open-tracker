@@ -1,67 +1,94 @@
 import type { TrackedTask } from '$lib/types';
 import { formatTime } from '$lib/utils/date-utils';
 import { getContext, setContext } from 'svelte';
+import { TaskService } from './task.service';
+import { GetCurrentUser } from './auth.service';
 
 export class TrackerService {
-	private taskName = $state<string | null>(null);
-	private startTime = $state<number | null>(null);
-	private endTime = $state<number | null>(null);
-	public isTracking = $state(false);
+	private trackedTask = $state<TrackedTask | null>(null);
 
 	constructor() {
-		// Initialize the tracker service
+		(async () => {
+			const currentUser = await GetCurrentUser();
+
+			if (!currentUser) {
+				throw new Error('User not authenticated');
+			}
+
+			this.trackedTask = await TaskService.GetCurrentlyTrackedTask(
+				currentUser.uid,
+			);
+		})();
 	}
 
-	public async StartTracking(task_name?: string): Promise<void> {
-		if (this.startTime !== null) {
+	public async StartTracking(
+		title: string,
+		projectId?: string | undefined,
+	): Promise<void> {
+		if (this.trackedTask !== null) {
 			return;
 		}
 
-		this.taskName = task_name || 'Unnamed Task';
-		this.startTime = Date.now();
-		this.isTracking = true;
+		this.trackedTask = {
+			id: undefined,
+			title: title || 'Unnamed Task',
+			startTime: Date.now(),
+			projectId: projectId,
+		};
+
+		const currentUser = await GetCurrentUser();
+
+		if (!currentUser) {
+			throw new Error('User not authenticated');
+		}
 
 		// Create a new tracker document in Firestore
+		this.trackedTask.id = (
+			await TaskService.CreateTask(this.trackedTask)
+		).id;
 	}
 
 	public async StopTracking(): Promise<void> {
-		if (this.startTime === null) {
+		if (this.trackedTask === null) {
 			return;
 		}
 
-		this.endTime = Date.now();
-		this.isTracking = false;
+		this.trackedTask.endTime = Date.now();
 
 		// Update the tracker document in Firestore with the end time
-		console.log(
-			`Tracking stopped. Duration: ${formatTime(this.endTime - this.startTime)}`,
-		);
+		const duration = this.trackedTask.endTime - this.trackedTask.startTime;
+		console.log(`Tracking stopped. Duration: ${formatTime(duration)}`);
+
+		const currentUser = await GetCurrentUser();
+
+		if (!currentUser) {
+			throw new Error('User not authenticated');
+		}
+
+		await TaskService.UpdateTask({
+			id: this.trackedTask.id,
+			...this.trackedTask,
+			endTime: this.trackedTask.endTime,
+		} as any);
 
 		// Reset the start and end times after stopping tracking
 		this.ResetTracking();
 	}
 
 	public GetStart(): number | null {
-		return this.startTime;
+		return this.trackedTask?.startTime || null;
 	}
 
 	public async ResetTracking(): Promise<void> {
-		this.taskName = null;
-		this.startTime = null;
-		this.endTime = null;
-		this.isTracking = false;
+		this.trackedTask = null;
 	}
 
-	public async GetTrackedTask(): Promise<TrackedTask | null> {
-		if (this.startTime !== null) {
-			return {
-				title: this.taskName || 'Unnamed Task',
-				startTime: this.startTime,
-				endTime: this.endTime,
-			};
-		}
+	public GetTrackedTask = $derived(() => {
+		return this.trackedTask;
+	});
 
-		return null;
+	public IsTracking(): boolean {
+		return this.trackedTask !== null;
 	}
 }
 

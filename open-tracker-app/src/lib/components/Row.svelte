@@ -1,7 +1,10 @@
 <script lang="ts">
+	import { invalidate } from '$app/navigation';
+	import { TaskService } from '$lib/services/task.service';
 	import type { Task } from '$lib/types';
 	import { formatTime } from '$lib/utils/date-utils';
 	import { Clock3, EllipsisVertical, FolderOpen } from '@lucide/svelte';
+	import UpdateTaskModal from './modals/UpdateTaskModal.svelte';
 
 	type Props = {
 		task: Task;
@@ -17,22 +20,40 @@
 	});
 
 	const endTime = $derived(() => {
-		return new Date(task.endTime).toLocaleTimeString([], {
-			hour: 'numeric',
-			minute: '2-digit',
-		});
+		return task.endTime
+			? new Date(task.endTime).toLocaleTimeString([], {
+					hour: 'numeric',
+					minute: '2-digit',
+				})
+			: null;
+	});
+
+	const duration = $derived(() => {
+		return task.duration ? formatTime(task.duration) : null;
 	});
 
 	let optionsVisible = $state<boolean>(false);
 
 	const options = [
-		{ label: 'Edit', action: () => console.log('Edit clicked') },
-		{ label: 'Delete', action: () => console.log('Delete clicked') },
+		{
+			label: 'Edit',
+			action: () => {
+				selectedTask = task;
+			},
+		},
+		{ label: 'Delete', action: () => DeleteTask() },
 	];
 
 	const DisplayOptions = () => {
 		optionsVisible = !optionsVisible;
 	};
+
+	const DeleteTask = async () => {
+		await TaskService.DeleteTask(task.id);
+		await invalidate('app:time-tracker');
+	};
+
+	let selectedTask = $state<Task | null>(null);
 </script>
 
 <div
@@ -106,7 +127,7 @@
 						Duration
 					</div>
 					<div class="mt-1 text-sm font-semibold text-white">
-						{formatTime(task.duration)}
+						{duration()}
 					</div>
 				</div>
 			</div>
@@ -138,3 +159,12 @@
 		</div>
 	</div>
 </div>
+
+{#if selectedTask !== null}
+	<UpdateTaskModal
+		{selectedTask}
+		onClose={() => {
+			selectedTask = null;
+		}}
+	/>
+{/if}

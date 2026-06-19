@@ -1,14 +1,16 @@
 <script lang="ts">
 	import { GetTrackerState } from '$lib/services/tracker.service.svelte';
 
-	const trackerState = GetTrackerState();
-	const isTracking = $derived<boolean>(trackerState.isTracking);
+	const { startTracking, stopTracking } = $props();
 
-	const ToggleTracking = () => {
-		if (trackerState.isTracking) {
-			trackerState.StopTracking();
+	const trackerState = GetTrackerState();
+	const isTracking = $derived<boolean>(trackerState.IsTracking());
+
+	const ToggleTracking = async () => {
+		if (isTracking) {
+			await stopTracking();
 		} else {
-			trackerState.StartTracking();
+			await startTracking();
 		}
 	};
 </script>

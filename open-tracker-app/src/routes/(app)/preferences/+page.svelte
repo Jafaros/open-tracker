@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import { Logout } from '$lib/services/auth.service';
+	import { PreferencesService } from '$lib/services/preferences.service.js';
 	import type { Preferences } from '$lib/types';
 	import { DollarSign, LogOut } from '@lucide/svelte';
 	import { fly } from 'svelte/transition';
@@ -14,10 +15,10 @@
 		hourlyRate: preferenes?.hourlyRate || 0,
 	});
 
-	const HandleSubmit = (event: SubmitEvent) => {
+	const HandleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
-
-		console.log('Form submitted:', formData);
+		await PreferencesService.SavePreferences(user.uid, formData);
+		await invalidate('app:preferences');
 	};
 
 	const HandleLogout = async () => {

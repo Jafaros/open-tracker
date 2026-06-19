@@ -4,14 +4,14 @@
 	import { formatTime } from '$lib/utils/date-utils';
 	import { Activity, CircleOff, Clock3, FolderOpen } from '@lucide/svelte';
 	import type { Project } from '$lib/types';
-
-	let taskName = $state<string>('');
+	import { invalidate } from '$app/navigation';
 
 	const trackerState = GetTrackerState();
-	const isTracking = $derived<boolean>(trackerState.isTracking);
+	const isTracking = $derived<boolean>(trackerState.IsTracking());
 
 	const startTime = $derived<number | null>(trackerState.GetStart());
 	let duration = $state<number | null>(null);
+	let taskName = $state<string>('');
 
 	$effect(() => {
 		if (startTime !== null) {
@@ -29,13 +29,42 @@
 		}
 	});
 
+	$effect(() => {
+		if (!isTracking) return;
+
+		const currentTask = trackerState.GetTrackedTask();
+
+		taskName = currentTask?.title ?? '';
+
+		selectedProject =
+			projects.find((p: Project) => p.id === currentTask?.projectId) ??
+			null;
+	});
+
 	let projectsVisible = $state<boolean>(false);
 	let selectedProject = $state<Project | null>(null);
+
+	const projectId = $derived<string>(
+		selectedProject ? selectedProject.id : '',
+	);
 
 	const { projects } = $props();
 
 	const DisplayProjects = () => {
 		projectsVisible = !projectsVisible;
+	};
+
+	const StartTracking = async () => {
+		await trackerState.StartTracking(taskName, projectId);
+	};
+
+	const StopTracking = async () => {
+		await trackerState.StopTracking();
+		await invalidate('app:time-tracker');
+
+		taskName = '';
+		duration = null;
+		selectedProject = null;
 	};
 </script>
 
@@ -113,6 +142,7 @@
 						<!-- svelte-ignore node_invalid_placement_ssr -->
 						<button
 							class="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-white/10"
+							style="color: {project.hexColor}"
 							onclick={() => {
 								selectedProject = project;
 								projectsVisible = false;
@@ -121,7 +151,7 @@
 							{project.title}
 						</button>
 					{/each}
-					<hr class="border-neutral-500/50 my-1" />
+					<hr class="border-neutral-500/50 my-2" />
 					<button
 						class="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-white/10"
 						onclick={() => {
@@ -153,7 +183,10 @@
 			</div>
 
 			<div class="max-sm:w-full">
-				<TrackingButton />
+				<TrackingButton
+					startTracking={StartTracking}
+					stopTracking={StopTracking}
+				/>
 			</div>
 		</div>
 	</div>

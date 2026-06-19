@@ -1,18 +1,23 @@
 export type TrackedTask = {
+	id?: string;
 	title: string;
 	startTime: number;
-	endTime: number | null;
+	endTime?: number;
+	projectId?: string;
 };
 
 export type Task = {
 	id: string;
 	title: string;
 	startTime: number;
-	endTime: number;
-	duration: number;
+	endTime?: number;
+	duration?: number;
 	projectId?: string;
 	project?: Project;
 };
+
+export type CreateTask = Omit<Task, 'id' | 'duration'>;
+export type UpdateTask = Omit<Task, 'duration'>;
 
 export type Project = {
 	id: string;

@@ -10,7 +10,7 @@ export const load = async ({ depends, parent }) => {
 		return { projects: [] };
 	}
 
-	const projects = await ProjectService.GetProjects(currentUser.uid);
+	const projects = await ProjectService.GetProjectsForUser(currentUser.uid);
 	const clients = await ClientService.GetClients(currentUser.uid);
 
 	// Map client data to projects
