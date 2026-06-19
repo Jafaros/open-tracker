@@ -43,4 +43,5 @@ export type UpdateClient = Client;
 
 export type Preferences = {
 	hourlyRate: number;
+	language: string;
 };

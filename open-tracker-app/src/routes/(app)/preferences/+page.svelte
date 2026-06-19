@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto, invalidate } from '$app/navigation';
+	import { GetLanguages } from '$lib/language.js';
 	import { Logout } from '$lib/services/auth.service';
 	import { PreferencesService } from '$lib/services/preferences.service.js';
 	import type { Preferences } from '$lib/types';
@@ -9,10 +10,13 @@
 	const { data } = $props();
 	const preferenes = $derived(data.preferences);
 	const user = $derived(data.currentUser);
+	const languages = $state(GetLanguages());
 
 	let formData = $state<Preferences>({
 		// svelte-ignore state_referenced_locally
 		hourlyRate: preferenes?.hourlyRate || 0,
+		// svelte-ignore state_referenced_locally
+		language: preferenes?.language || 'en',
 	});
 
 	const HandleSubmit = async (event: SubmitEvent) => {
@@ -69,6 +73,28 @@
 				<p class="text-sm text-neutral-400">
 					Use your standard rate so earnings can be calculated
 					consistently.
+				</p>
+			</div>
+
+			<div class="space-y-2">
+				<label
+					for="hourlyRate"
+					class="block text-sm font-medium text-neutral-200"
+				>
+					Language
+				</label>
+				<select
+					bind:value={formData.language}
+					class="block w-full rounded-xl border border-neutral-600 bg-neutral-700 px-4 py-3 text-neutral-100 shadow-sm outline-none transition-colors placeholder:text-neutral-500 focus:border-neutral-500 focus:ring-2 focus:ring-neutral-500/30"
+				>
+					{#each languages as language}
+						<option value={language.code}>{language.name}</option>
+					{/each}
+				</select>
+				<p class="text-sm text-neutral-400">
+					Choose your preferred language for the app interface.
+					Translations are community-contributed and may be
+					incomplete.
 				</p>
 			</div>
 
