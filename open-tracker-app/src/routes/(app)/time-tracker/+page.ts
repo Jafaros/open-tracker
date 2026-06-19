@@ -8,7 +8,7 @@ export const load = async ({ depends, parent }) => {
 	const { currentUser } = await parent();
 
 	if (!currentUser) {
-		return { projects: [] };
+		return { projects: [], tasks: [] };
 	}
 
 	const serviceContext = { userId: currentUser.uid };

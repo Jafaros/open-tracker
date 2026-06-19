@@ -49,6 +49,10 @@
 	};
 
 	const DeleteTask = async () => {
+		if (!confirm('Are you sure you want to delete this task?')) {
+			return;
+		}
+
 		await TaskService.DeleteTask(task.id);
 		await invalidate('app:time-tracker');
 	};
